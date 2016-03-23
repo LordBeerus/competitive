@@ -1,0 +1,124 @@
+#include<iomanip>
+#include<iostream>
+#include <vector>
+ #include <algorithm>
+#include <fstream>
+//#include<map>
+ #include<cmath>
+//#include<stdio.h>
+//#include<queue>
+//#include <set>
+//#include <stack>
+
+using std::string;
+using namespace std;
+#define vi vector<int>
+#define ii pair<int,int>
+#define MIN  (-214748364);
+#define ull unsigned long long int
+#define ll  long long int
+
+int a,b,c,x,y,z,t,n,m,k, MAX;
+const int N=10002;
+;
+struct line {ll m ;ll c ;}lstack[N];
+int top=0;
+ll dp[N];int cf[N],ti[N];
+int WALK;
+bool v1[N],v2[N];
+int insertAft(line X){
+    int H = top , L =0,  m1,m2;
+   double x1,x2;
+    while(H-L>1){
+
+        m1 = (H+L)>>1;
+        m2 = (m1)+1;
+
+        x1 = (X.c - lstack[m1].c*1.0)/(lstack[m1].m*1.0 - X.m);
+        x2 = (X.c - lstack[m2].c*1.0)/(lstack[m2].m*1.0 - X.m);
+
+        if(fabs(x1-x2)<1e-8){
+          H= m1;
+        }
+       else if(x2<x1){
+           L=m2;
+        }else{
+           H=m1;
+        }
+    }
+    x1 = (X.c - lstack[L].c*1.0)/(lstack[L].m*1.0 - X.m);
+    x2 = (X.c - lstack[H].c*1.0)/(lstack[H].m*1.0 - X.m);
+    if(x1<x2 || fabs(x1-x2) < 1e-8){
+        return L;}
+    else if (x1 > x2   ) {
+        return H;}
+
+}
+
+int getline(ll s,int l=0)
+{
+    int H =top, L = 0;
+    while ( H-L >1){
+        int m = (H+L)>>1;
+        double inter = (lstack[m].c - lstack[m+1].c*1.00)/((lstack[m+1].m*1.00 - lstack[m ].m));
+
+        if(s<inter){L=m+1;}
+        else H = m;
+    }
+    double inter = (lstack[L].c - lstack[H].c*1.00)/((lstack[H].m*1.00 - lstack[L].m));
+    if(s<inter)
+    {return H;}
+    else return L;
+
+}
+
+int walk(ull s){
+
+
+    for(int i = WALK;i<top;i++){
+        int j = i+1;
+        double inter = (lstack[i].c - lstack[j].c*1.00)/((lstack[j].m*1.00 - lstack[i ].m));
+        if(s>inter)
+            return i;
+        else
+            WALK++;
+
+
+    }
+    return top;
+}
+
+int main() {
+
+  //  freopen("cube.txt", "r", stdin);
+  scanf("%d %d",&n,&z);
+    cf[0]=0,ti[0]=0;
+    int S;
+    for (int i = 1; i <=n ; ++i) {
+        scanf("%d %d",&(a),&(b));
+        ti[i] = ti[i-1]+a;
+        cf[i]=cf[i-1]+b;
+
+    }
+    dp[n]=0;
+    top=0;
+    line a ={-ti[n],cf[n]*ti[n]};
+    lstack[0]=a;
+    for(int i = n-1;i>=0;i--){
+        int x = getline(cf[i]);
+        dp[i] = lstack[x].m*cf[i]+lstack[x].c+z*(cf[n]-cf[i])-cf[n]*ti[i]+ti[i]*cf[i] ;
+        line p =  {-ti[i],dp[i]+cf[n]*ti[i]};
+        int pos = insertAft(p);
+
+        lstack[pos+1]=p;
+        top = pos+1;
+    }
+    printf("%lld",dp[0]);
+    return 0;
+
+
+
+
+
+
+}
