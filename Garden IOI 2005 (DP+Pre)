@@ -1,0 +1,142 @@
+#include<iomanip>
+#include<iostream>
+#include <vector>
+ #include <algorithm>
+#include <fstream>
+//#include<map>
+ #include<cmath>
+//#include<stdio.h>
+//#include<queue>
+//#include <set>
+//#include <stack>
+using std::string;
+using namespace std;
+#define vi vector<int>
+#define ii pair<int,int>
+#define MIN  (-214748364);
+#define ull unsigned long long int
+#define ll  long long int
+const int MAX= 100000000;
+const int N = 256;
+unsigned int matrix[N][N],cnt[N ][N ];int h , w , n , k;
+unsigned int vcr[N],vcl[N] , hcu[N],hcd[N];
+
+
+void showm(){
+    for (int i = 1; i <=h ; ++i) {
+        for (int j = 1; j <=w; ++j) {
+            cout<<matrix[i][j]<<" ";
+
+        }
+ cout<<endl;   }
+}
+void showc(){
+    for (int i = 1; i <=h ; ++i) {
+        for (int j = 1; j <=w ; ++j) {
+            cout<<cnt[i][j]<<" ";
+
+        }
+        cout<<endl;   }
+}
+int main() {
+
+    freopen("cube.txt", "r", stdin);
+    fill(vcr ,vcr+N,MAX);
+    fill(vcl ,vcl+N,MAX);
+    fill(hcu ,hcu+N,MAX);
+    fill(hcd ,hcd+N,MAX);
+    fill(&cnt[0][0],&cnt[0][0]+N*N , 0);
+  scanf("%d %d %d %d",&h,&w,&n,&k);
+    int x,y;
+    for (int i = 0; i <n ; ++i) {
+        scanf("%d %d",&x,&y);
+        matrix[x][y]+=1;
+    }
+
+    for (int row = 1; row <=h; ++row) {
+        for (int width= 0; width <=w ; ++width) {
+            cnt[row][width] = cnt[row][width-1]+cnt[row-1][width]-cnt[row-1][width-1]+matrix[row][width];
+
+        }
+
+    }
+
+    for(int brow = 1 ; brow<=h;brow++){
+        for( int trow = brow;trow>=1;trow--)
+        {  unsigned int min0 = MAX;
+            int left = 1  , right =1;
+             while(right<=w && left<=right){
+                 int sum=cnt[brow][right]-cnt[trow-1][right]-cnt[brow][left-1]+cnt[trow-1][left-1];
+                 if(sum==k){
+                     min0= 2*(right-left+1) + 2*(brow-trow+1);
+                     vcr[right] = min(vcr[right],min0);
+                     vcl[left] = min(vcl[left],min0);
+                     left++;
+                 }
+                 else if(sum>k){
+                     left++;
+
+
+                 }else // sum<k
+                 {right++;
+
+                 }
+             }
+
+        }
+    }
+    for (int j = 1; j <=w ; ++j) {
+        vcr[j] = min(vcr[j],vcr[j-1]);
+    }for (int j = w-1; j>=1; --j) {
+        vcl[j] = min(vcl[j],vcl[j+1]);
+    }
+    unsigned ANS = MAX;
+    for(int i = 1;i<w;i++)
+ANS = min (ANS ,vcr[i]+vcl[i+1]);
+
+
+    for(int bcol = 1 ; bcol<=h;bcol++){
+        for( int tcol = bcol;tcol>=1;tcol--)
+        {  unsigned int min0 = MAX;
+            int up = 1 , down =1;
+            while(down<=h && up<=down){
+                int sum=cnt[down][bcol]-cnt[down][tcol-1]-cnt[up-1][bcol]+cnt[up-1][tcol-1];
+                if(sum==k){
+                    min0= 2*(down-up+1) + 2*(bcol-tcol+1);
+                    hcu[up] = min(hcu[up],min0);
+                    hcd[down] = min(hcd[down],min0);
+                    up++;
+                }
+                else if(sum>k){
+                    up++;
+
+
+                }else // sum<k
+                {down++;
+
+                }
+            }
+
+        }
+    }
+    for (int j = h; j >=1 ; --j) {
+        hcu[j] = min(hcu[j],hcu[j+1]);
+    }for (int j =1; j<=h ; ++j) {
+        hcd[j] = min(hcd[j],hcd[j-1]);
+    }
+
+
+    for(int i = 1;i<h;i++)
+        ANS = min (ANS ,hcu[i+1]+hcd[i ]);
+    if(ANS==MAX)
+        printf("NO");
+    else
+        printf("%d",ANS);
+    return 0;
+
+
+
+
+
+
+}
