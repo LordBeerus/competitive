@@ -1,0 +1,102 @@
+#include<iomanip>
+#include<iostream>
+#include <vector>
+#include <algorithm>
+#include <fstream>
+#include<map>
+#include<cmath>
+//#include<stdio.h>
+//#include<queue>
+//#include <set>
+//#include <stack>
+using std::string;
+using namespace std;
+#define vi vector<int>
+#define ii pair<int,int>
+#define MIN  (-214748364);
+#define ull unsigned long long int
+#define ll  long long int
+const int MAX = 100000000;
+const int N = 1006;
+int B, n;
+struct obj {
+    int pos, horses;
+    vector<ii > skill;
+} stable[N];
+double dp[N];int pos[N];
+
+bool comp(obj a, obj b) { return a.pos < b.pos; }
+
+bool comp2(ii a, ii b) {
+    if (a.first == b.first)
+        return a.second > b.second;
+    return a.first > b.first;
+}
+
+int main() {
+    map<int, int> position;
+   // freopen("cube.txt", "r", stdin);
+    scanf("%d %d", &B, &n);
+    int x, m, y, tot = 0;
+    for (int i = 0; i < n; i++) {
+        scanf("%d %d", &x, &m);
+        int index = tot;
+        if (position.find(x) != position.end())
+            index = position[x];
+        else {
+            position[x] = i;
+            tot += 1;
+        }
+        stable[index].pos = x;
+        stable[index].horses += m;
+        for (int j = 0; j < m; ++j) {
+            scanf("%d %d", &x, &y);
+            ii a = {x, y};
+            stable[index].skill.push_back(a);
+
+        }
+    }
+
+    sort(stable, stable + tot, comp);
+
+    int added = 1;
+    for (int i = 0; i < tot; i++) {
+
+        pos[i] = stable[i].pos;
+    }
+    pos[tot] = B;
+
+    if (pos[0] != 0) {
+        printf("-1");
+        return 0;
+    }
+
+    for (int i = 0; i < tot; i++)
+        sort(stable[i].skill.begin(), stable[i].skill.end(), comp2);
+
+    fill(dp,dp+tot+1,1e18);
+    dp[0]=0;
+    for (int i = 0; i < tot; i++) {
+        int pointer = i + 1;
+        for (int j = 0;j< stable[i].horses; j++) {
+            while (pointer <= tot) {
+                if (stable[i].pos + stable[i].skill[j].second >= pos[pointer]) {
+                    dp[pointer] = min(dp[pointer], dp[i] + ((pos[pointer]-pos[i]*1.00)/ stable[i].skill[j].first));
+                    pointer++;
+                }
+                else {
+
+                    break;
+
+                }
+            }
+
+        }
+    }
+    printf("%.9f",dp[tot]);
+
+
+    return 0;
+
+
+}
