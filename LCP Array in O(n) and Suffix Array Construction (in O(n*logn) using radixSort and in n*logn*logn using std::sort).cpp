@@ -24,7 +24,7 @@ int P[MAXLG][MAXN], A[MAXN], LCP[N], r[N], posOfRank[N];
 struct entry {
     int one, two, pos;
 } L[MAXN];
-string S = "banana$";
+string S = "ccccc$";
 int ipow(int base, int exp)
 {
     int result = 1;
@@ -61,7 +61,7 @@ void LCParr() {
 
 void countSort(int start, int end, int exp, int opt) {
     int freq[10];
-    fill(freq, freq + n, 0);
+    fill(freq, freq + 10, 0);
 
     entry temp[n];
     for (int i = start; i <= end; i++) {
@@ -71,14 +71,14 @@ void countSort(int start, int end, int exp, int opt) {
             freq[(L[i].two / exp) % (10)]++;
         };
     }
-    for (int i = start + 1; i <= end; i++) {
+    for (int i = 1; i <10; i++) {
         freq[i] = freq[i] + freq[i - 1];
     }
-    for (int i = start + 1; i <= end; i++) {
+    for (int i = end ; i >=start; i--) {
         if (opt == 1)
-            temp[freq[(L[i].one/ exp) % (10)]--] = L[i];
+            temp[(freq[(L[i].one/ exp) % (10)]--) - 1] = L[i];
         else
-            temp[freq[(L[i].two / exp) % (10)]--] = L[i];
+            temp[(freq[(L[i].two / exp) % (10)]--) - 1] = L[i];
 
 
     }
@@ -87,32 +87,36 @@ void countSort(int start, int end, int exp, int opt) {
 
 
 }
-void radixSort(int start = 0 ,int end = n-1){
-    int maximum;
+void radixSort(int start = 0 ,int end = n-1,int type=1){
+    int maximum=-1;
     for(int i =start; i<=end;i++){
-        maximum - max(maximum,L[i].one);
+        maximum = max(max(maximum,L[i].one),L[i].two);
     }
     for(int exp=1; maximum/exp > 0 ; exp*=10){
-        countSort(start,end, exp,1);
+        countSort(start,end, exp,type);
 
     }
+
+
 
 
 }
 void sortByyTwo(){
     int st=0,end=0;
     for(int i =1;i<n;i++){
-        if(L[i].two==L[st].two){
+        if(L[i].one==L[st].one){
             end++;
         }
         else{
             if(end-st>0)
-                radixSort(st,end);
+                radixSort(st,end,2);
             st = end+1;
             end = st;
         }
 
     }
+    if(end-st>0)
+        radixSort(st,end,2);
 }
 
 
@@ -134,7 +138,7 @@ bool cmpSuff(entry a, entry b) {
 void suffix(string c) {
     n = c.length();
     for (int i = 0; i < n; i++)
-        P[0][i] = c[i] - 'a';
+        P[0][i] = c[i] - '$';
     for (step = 1, cnt = 1; cnt >> 1 < n; step++, cnt <<= 1) {
         for (int i = 0; i < n; i++) {
             L[i].one = P[step - 1][i];
@@ -142,7 +146,9 @@ void suffix(string c) {
             L[i].pos = i;
         }
 
-        sort(L, L + n, cmpSuff);
+radixSort(0,n-1);
+        sortByyTwo();
+        show();
         cout << "Step " << step << endl;
 
         for (int i = 0; i < n; ++i) {
@@ -161,7 +167,7 @@ void suffix(string c) {
 }
 
 int main() {
-    
+  //freopen("cube.txt", "r", stdin);
 
     suffix(S);
     LCParr();
