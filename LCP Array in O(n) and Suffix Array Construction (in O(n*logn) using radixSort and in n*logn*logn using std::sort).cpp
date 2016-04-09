@@ -10,21 +10,21 @@
 #include <set>
 #include <stack>
 
-#define MAXN 65
-#define MAXLG 8
+#define MAXN 50007
+#define MAXLG 16
 using std::string;
 using namespace std;
 #define vi vector<int>
 #define ii pair<int,int>
 #define ull unsigned long long int
 #define ll  long long int
-const int N = 100;
-int n, step, cnt;
-int P[MAXLG][MAXN], A[MAXN], LCP[N], r[N], posOfRank[N];
+
+int n, step, cnt,t;
+int P[MAXLG][MAXN], A[MAXN], LCP[MAXN], r[MAXN], posOfRank[MAXN];
 struct entry {
     int one, two, pos;
 } L[MAXN];
-string S = "ccccc$";
+string S ;
 int ipow(int base, int exp)
 {
     int result = 1;
@@ -42,9 +42,11 @@ void LCParr() {
     int L = 0;
     for (int i = 0; i < n; i++) {
         int k = r[i];
-        int j = posOfRank[k - 1];
-        if (k > 0) {
 
+
+
+        if (k > 0) {
+            int j = posOfRank[k - 1];
             while (S[i + L] == S[j + L]) { L++; }
             LCP[k] = L;
 
@@ -138,22 +140,20 @@ bool cmpSuff(entry a, entry b) {
 void suffix(string c) {
     n = c.length();
     for (int i = 0; i < n; i++)
-        P[0][i] = c[i] - '$';
-    for (step = 1, cnt = 1; cnt >> 1 < n; step++, cnt <<= 1) {
+        P[0][i] = c[i] - ' ';
+
+    for (step = 1, cnt = 1; (cnt >> 1) < n; step++, cnt <<= 1) {
         for (int i = 0; i < n; i++) {
             L[i].one = P[step - 1][i];
             L[i].two = ((i + cnt) < n) ? P[step - 1][i + cnt] : -1;
             L[i].pos = i;
         }
+sort(L,L+n,cmpSuff);
 
-radixSort(0,n-1);
-        sortByyTwo();
-        show();
-        cout << "Step " << step << endl;
 
         for (int i = 0; i < n; ++i) {
-            P[step][L[i].pos] = ((i > 0) && (L[i].one == L[i - 1].one) && (L[i].two == L[i - 1].two)) ? P[step][L[i -
-                                                                                                                  1].pos]
+            P[step][L[i].pos] = ((i > 0) && (L[i].one == L[i - 1].one) && (L[i].two == L[i - 1].two)) ?
+                                P[step][L[i-1].pos]
                                                                                                       : i;
         }
     }
@@ -167,10 +167,19 @@ radixSort(0,n-1);
 }
 
 int main() {
-  //freopen("cube.txt", "r", stdin);
-
+    freopen("cube.txt", "r", stdin);
+    scanf("%d", &t);
+    while (t--) {
+        cin>>S;
+        S.push_back(' ');
     suffix(S);
     LCParr();
+    int nodes = 0;
+    for (int i = 1; i < n; i++) {
+        nodes += (n - posOfRank[i]) - LCP[i] - 1;
+    }
+        printf("%d\n",nodes);
+}
     return 0;
 
 
