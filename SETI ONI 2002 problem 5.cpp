@@ -2,7 +2,7 @@
 Given a string of length N (1≤N≤131072) 
 and M strings of length at most 64, count
 the number of matchings of every small string in the big one.*/
-#include<iomanip>
+ #include<iomanip>
 #include<iostream>
 #include <vector>
 #include <algorithm>
@@ -14,7 +14,7 @@ the number of matchings of every small string in the big one.*/
 #include <set>
 #include <stack>
 
-#define MAXN 50007
+#define MAXN 107
 #define MAXLG 16
 using std::string;
 using namespace std;
@@ -28,9 +28,10 @@ int P[MAXLG][MAXN], A[MAXN], LCP[MAXN], r[MAXN], posOfRank[MAXN],LCPI[MAXN][MAXL
 struct entry {
     int one, two, pos;
 } L[MAXN];
-string S ="aaaabbbbbcccc$";
+string S ="aaaabdfndmxnxvbdfnbbdfghdsjdhkdghkdkdydfghhycsdhjktkmncxvgbbbcccc$";
 int ipow(int base, int exp)
-{
+{    if(exp<0)
+        return INT_FAST32_MIN;
     int result = 1;
     while (exp)
     {
@@ -63,20 +64,22 @@ void LCParr() {
 
     }
 }
+
+//LCP between 2 indexes of suffixArray
 void preProcess(){
     for(int i = 0 ; i<n;i++){
-        LCPI[0][i] = LCP[i];
+        LCPI[i][0] = LCP[i];
     }
     for(int sweep = 1; sweep  <MAXLG;sweep++){
-        for(int idx = 0;idx+1<<sweep < n;idx++){
-            LCPI[idx][sweep] = min(LCPI[idx][ sweep-1],LCPI[idx+1<<(sweep-1)][sweep-1]);
+        for(int idx = 0;idx+(1<<sweep )< n;idx++){
+            LCPI[idx][sweep] = min(LCPI[idx][ sweep-1],LCPI[idx+(1<<(sweep-1))][sweep-1]);
 
         }
     }
 }
 int lcp(int x ,int y){
-    x = x-1;//normalize
-    int k = log(y-x+1);
+    x = x+1;//normalize
+    int k = log2(y-x+1);
     return min(LCPI[x][k],LCPI[y-ipow(2,k)+1][k]);
 
 }
@@ -190,52 +193,15 @@ int main() {
  int prelo,prehi;
     suffix(S);
     LCParr();
-   string pat="bbb";
-    int len = pat.length();
-    int curr = 0,lo1=0,hi1 = n-1;
-    int lower , higher;
-    prelo=0,prehi=n-1;
-    while(curr<len){
-        //finf upper bound
-        while(hi1-lo1>1){
-            int mid = (hi1+lo1)>>1;
-            if(S[posOfRank[mid]+curr]< pat[curr])
-             lo1 = mid+1;
-            else if(S[posOfRank[mid]+curr]>pat[curr])
-                hi1 = mid-1;
-            else
-                lo1 = mid+1;
-
+    preProcess();
+    for(int i = 0 ; i<n;i++)
+        for(int j = i+1 ; j<n;j++){
+            int m = lcp(i,j);
+            int m2 = *min_element(LCP + (i+1) ,LCP + j+1);
+            if(m!=m2)
+            {cout<<"FALSE "<<i<< " "<<j<<endl;lcp(i,j);}
         }
 
-        if(S[posOfRank[hi1]+curr]==pat[curr])
-            higher = hi1;
-        else
-            higher = lo1;
-
-
-        //find lower bound
-        lo1=prelo,hi1 = prehi;
-        while(hi1-lo1>1){
-            int mid = (hi1+lo1)>>1;
-            if(S[posOfRank[mid]+curr]< pat[curr])
-               lo1 = mid+1;
-            else if(S[posOfRank[mid]+curr]>pat[curr])
-                hi1 = mid-1;
-            else
-                hi1 = mid-1;
-        }
-
-        if(S[posOfRank[lo1]+curr]==pat[curr])
-            lower = lo1;
-        else
-            lower = hi1;
-
-
-        curr++;
-        lo1=prelo=lower;
-        hi1=prehi=higher;
-    }
 
     return 0;
 
