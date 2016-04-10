@@ -148,8 +148,9 @@ void suffix(string c) {
             L[i].two = ((i + cnt) < n) ? P[step - 1][i + cnt] : -1;
             L[i].pos = i;
         }
-sort(L,L+n,cmpSuff);
-
+sort(L,L+n,cmpSuff);//n(logn)^2
+//radixSort();
+//sortByyTwo();//for nlogn
 
         for (int i = 0; i < n; ++i) {
             P[step][L[i].pos] = ((i > 0) && (L[i].one == L[i - 1].one) && (L[i].two == L[i - 1].two)) ?
