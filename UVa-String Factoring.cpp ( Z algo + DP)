@@ -1,0 +1,101 @@
+#include<iomanip>
+#include<iostream>
+#include <vector>
+#include <algorithm>
+#include <fstream>
+#include<map>
+#include<cmath>
+#include<stdio.h>
+#include<queue>
+#include <set>
+#include <stack>
+
+using std::string;
+using namespace std;
+#define vi vector<int>
+#define ii pair<int,int>
+#define ull unsigned long long int
+#define ll  long long int
+
+
+#define MAXN 107
+#define MAXLG 16
+
+int ipow(int base, int exp) {
+    if (exp < 0)
+        return INT_FAST32_MIN;
+    int result = 1;
+    while (exp) {
+        if (exp & 1)
+            result *= base;
+        exp >>= 1;
+        base *= base;
+    }
+
+    return result;
+}
+int missAt[MAXN];
+string patt="ABA",S="abzabzabz";
+   vi zFunction(string s,int start = 0 ){
+       int n = s.length() ;
+       vi z(n);
+       for(int i=start+1 , l= start, r =start;i<n;i++){
+           if(i<=r ){
+               z[i]=min(z[i-l+start],r-i+1);
+           }
+           while(i+z[i]<n && s[z[i]+start]==s[i+z[i] ])
+               z[i]++;
+           if(i+z[i]-1 >r){
+               l=i;r=i+z[i]-1;
+
+           }
+       }
+return z;
+   }
+int main() {
+// freopen("cube.txt", "r", stdin);
+
+    int dp[100][100];
+      while(true){
+          cin>>S;
+          int N = S.length();
+          if(S=="*")break;
+          vi common[N];
+
+          for(int i =0;i<N;i++)
+              common[i] = zFunction(S,i);
+          for(int i=0;i<N;i++)dp[i][i]=1;
+
+      for(int len = 2;len<=N;len++)
+      {
+          for(int i =0,j = i+len-1;j<N;i++,j++){
+              dp[i][j] = j-i+1;
+              for(int k = i+1;k<=j;k++)
+                  dp[i][j] = min(dp[i][j],dp[i][k-1]+dp[k][j]);
+
+              for(int k = 1 ; k< N;k++){
+                  bool same = true;
+
+                  if((j-i+1)%k==0){
+                      for(int l = i+k;l<=j;l+=k){
+                            if(common[i][l]<k){
+                                same=false;
+                                break;
+                            }
+                      }
+                      if(same)
+                      dp[i][j] = min(dp[i][j],dp[i][i+k-1]);
+                  }
+              }
+
+          }
+      }
+
+          printf("%d\n",dp[0][N-1]);
+
+      }
+
+return 0;
+
+
+}
