@@ -21,7 +21,7 @@ using namespace std;
 #define MAXN 107
 #define MAXLG 16
 struct state{
-int link ,len;
+int link ,len,pos=INT_FAST32_MAX;
     map<char,int> next;
 };
 state node[MAXN*2];
@@ -33,6 +33,7 @@ int POS;
 void add(char c){
     int curr = ++size;
     node[curr].len = node[last].len+1;
+    node[curr].pos = min(node[curr].pos,POS);
     state p = node[last];
     int check = last;
     for(; check!=-1 && !node[check].next.count(c) ; check= node[check].link){
@@ -51,6 +52,7 @@ void add(char c){
             clone = q;
             clone.len = p.len+1;
             node[cl]=clone;
+            node[cl].pos = 9999;
              ::clone[cl]=true;
             int nodeC = check;
             for(;nodeC!=-1 && (node[nodeC].next[c]==p.next[c]) ; nodeC= node[nodeC].link){
@@ -168,6 +170,19 @@ if(curr!=0)
     cnt[node[curr].link]+=cnt[curr];
 
 }
+
+void first(int curr=0){
+
+    for(auto nxt : node[curr].next){
+        if(!done[nxt.second])
+        {first(nxt.second);
+            done[nxt.second]=true;}
+
+    }
+    if(curr!=0 )
+      node[node[curr].link].pos = min ( node[node[curr].link].pos,node[curr].pos);
+
+}
 int numOfOccurrences(string s){
     for(int i = 0 ; i<MAXN*2;i++)
     {     if(!clone[i])
@@ -208,14 +223,17 @@ int main() {
 
 node[0].link=-1;
     node[0].len=0;
-
+POS=0;
 fill(done,done+MAXN*2,false);
     for (int i = 0; i <let.length() ; ++i) {
+
         add(let[i]);
+        POS++;
     }
-
-cout<<numOfOccurrences("c");
-
+    string src = "abc";
+    verify(src);
+ first();
+cout<<node[POS].pos - src.length()+1;
 return 0;
 
 
