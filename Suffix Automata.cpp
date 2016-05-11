@@ -26,6 +26,9 @@ int link ,len;
 };
 state node[MAXN*2];
 int last = 0,size=0;
+int d[MAXN*2],ans[MAXN*2],cnt[2*MAXN];
+bool done[2*MAXN],clone[2*MAXN];
+int POS;
 
 void add(char c){
     int curr = ++size;
@@ -48,6 +51,7 @@ void add(char c){
             clone = q;
             clone.len = p.len+1;
             node[cl]=clone;
+             ::clone[cl]=true;
             int nodeC = check;
             for(;nodeC!=-1 && (node[nodeC].next[c]==p.next[c]) ; nodeC= node[nodeC].link){
                node[nodeC].next[c] = cl;
@@ -58,14 +62,17 @@ void add(char c){
     }
 last = curr;
 }
-//if q exists in S
+
 bool verify(string q){
-    int matched =0, curr=0;
+    int matched =0, curr=0,pos;
     while(1){
-        if(node[curr].next.count(q[matched])){
+        if(node[curr].next.count(q[matched])>0){
+
+
+            pos=node[curr].next[q[matched]];
+            POS = pos;
             curr = node[curr].next[q[matched]];
             matched++;
-
 
         }else{
             return false;
@@ -74,33 +81,131 @@ bool verify(string q){
         if(matched==q.length())return true;
 
     }
+
 }
-int d[MAXN*2];
-bool done[2*MAXN];
-//no of diff substrings
+
 int subStrings(int curr){
-   if(node[curr].next.size()==0){
-       d[curr]=0;
+    if(node[curr].next.size()==0){
+        d[curr]=0;
 
-   }else{
-       for(auto nxt : node[curr].next)
-       {
-           if(!done[nxt.second])
-               subStrings(nxt.second);
+    }else{
+        for(auto nxt : node[curr].next)
+        {
+            if(!done[nxt.second])
+                subStrings(nxt.second);
 
-           d[curr]+=1+d[nxt.second];
-       }
-   }      done[curr]=true;
+            d[curr]+=1+d[nxt.second];
+
+        }
+    }      done[curr]=true;
 
 
 
 
 
 };
+
+int subStringsLen(int curr){
+    if(node[curr].next.size()==0){
+        d[curr]=0;
+        ans[curr]=0;
+    }else{
+
+        for(auto nxt : node[curr].next)
+        {
+            if(!done[nxt.second])
+                subStringsLen(nxt.second);
+
+            d[curr]+=1+d[nxt.second];
+            ans[curr]+=ans[nxt.second];
+
+        }
+        ans[curr]+=d[curr];
+    }      done[curr]=true;
+
+
+
+
+
+};
+
+string KTHLexoGraphicSubString(int kth){
+    int curr=0,count=0,down=0;
+    string ans;
+    while(true){
+        for(auto nxt:node[curr].next){
+            if(kth>(count+1+d[nxt.second])){
+                count+=1+d[nxt.second];
+            }
+            else{
+                count+=1;
+                down = nxt.second;
+                ans.push_back(nxt.first);
+                break;
+            }
+
+
+        }
+
+        if(count==kth){
+            return ans;
+        }
+        else{
+            curr = down;
+        }
+    }
+}
+
+void countOcc(int curr=0){
+
+    for(auto nxt : node[curr].next){
+        if(!done[nxt.second])
+        {countOcc(nxt.second);
+        done[nxt.second]=true;}
+
+    }
+if(curr!=0)
+    cnt[node[curr].link]+=cnt[curr];
+
+}
+int numOfOccurrences(string s){
+    for(int i = 0 ; i<MAXN*2;i++)
+    {     if(!clone[i])
+            cnt[i]+=1;
+        else
+            cnt[i]+=0;
+    }
+  countOcc();
+    verify(s);
+
+    return cnt[POS];
+}
+string smallestCycle(string S){
+    int curr=0;
+    string ans;
+    while(true){
+        if(node[curr].next.size()==0){
+            break;
+        }
+        else{
+            for(auto nxt : node[curr].next){
+            ans.push_back(nxt.first);
+
+            curr = nxt.second;
+                break;
+            }
+        }
+        if(ans.length()==(S.length()/2))
+            break;
+    }
+    return ans;
+}
+
 int main() {
  freopen("cube.txt", "r", stdin);
     string let;
     cin>>let;
+
 node[0].link=-1;
     node[0].len=0;
 
@@ -108,9 +213,9 @@ fill(done,done+MAXN*2,false);
     for (int i = 0; i <let.length() ; ++i) {
         add(let[i]);
     }
-subStrings(0);
 
-    cout<<d[0];
+cout<<numOfOccurrences("c");
+
 return 0;
 
 
