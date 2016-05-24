@@ -40,7 +40,7 @@ void addline(int id ,  ll m , ll c,int i){
             break;
 
     }
-    if(l[id].size()>0 && l[id][l[id].size()-1].m == l1.m  && l[id][l[id].size()-1].c<l1.c )
+    if(l[id].size()>0 && l[id][l[id].size()-1].m == l1.m  && l[id][l[id].size()-1].c<=l1.c )
         l[id].erase(l[id].end()-1);
     l[id].push_back(l1);
 
