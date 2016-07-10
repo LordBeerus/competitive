@@ -23,7 +23,7 @@ using namespace std;
 #define EPS 1e-8
 #define endl '\n'
 vi adj[MAXN];
-int A[MAXN][MAXLG], level[MAXN];
+int A[MAXN][MAXLG] , level[MAXN];
 ll dpnode[MAXN], dpdist[MAXN];
 ll dprnode[MAXN],dprdist[MAXN];
 int ans, lognodes;
