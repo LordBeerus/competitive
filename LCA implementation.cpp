@@ -103,13 +103,13 @@ int dfs2(int curr = 0,int par = -1) {
 int lca(int p, int q) {
     if (level[p] < level[q])
         swap(p, q);
-    for (int i = lognodes; i >= 0; i--)
+    for (int i = ceil(log2(n)); i >= 0; i--)
         if (level[p] - (1 << i) >= level[q])
             p = A[p][i];
 
     if (p == q)
         return p;
-    for (int i = lognodes; i >= 0; i--)
+    for (int i = ceil(log2(n)); i >= 0; i--)
         if (A[p][i] != -1 && A[p][i] != A[q][i]) {
             p = A[p][i];
             q = A[q][i];
@@ -148,8 +148,8 @@ int main() {
     dfs();
    dfs2();
     lognodes = lb(nodes);
-    for (int j = 1; j <= lognodes; j++)
-        for (int i = 0; i < nodes; i++)
+    for (int j = 1; j <= ceil(log2(n)); j++)
+        for (int i = 0; i < ceil(log2(n)); i++)
             if (A[i][j - 1] != -1)
                 A[i][j] = A[A[i][j - 1]][j - 1];
             else
