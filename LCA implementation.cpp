@@ -149,7 +149,7 @@ int main() {
    dfs2();
     lognodes = lb(nodes);
     for (int j = 1; j <= ceil(log2(n)); j++)
-        for (int i = 0; i < ceil(log2(n)); i++)
+        for (int i = 0; i < n; i++)
             if (A[i][j - 1] != -1)
                 A[i][j] = A[A[i][j - 1]][j - 1];
             else
