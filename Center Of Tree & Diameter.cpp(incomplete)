@@ -1,0 +1,40 @@
+int n , k,parnt[MAXN];
+vi adj[MAXN];
+int v1 , v2 , len=-1,lca;
+ii deepest[MAXN];
+bool del[MAXN];
+
+void centerOfTree(int curr,int par){
+    vii nodes;
+    ii top ={-1,curr}, sec={-1,curr};
+
+    for(auto nxt : adj[curr]){
+        if(nxt!=par && !del[nxt]){
+            parnt[nxt]=curr;
+            centerOfTree(nxt,curr);
+            nodes.push_back(deepest[nxt]);}
+    }
+
+        for(auto n : nodes){
+            if(n.first>=top.first){
+                sec.first = top.first;
+                sec.second = top.second;
+                top.first = n.first;
+                top.second = n.second;
+                continue;
+            }
+            if(n.first>sec.first){
+                sec.first = n.first;
+                sec.second = n.second;
+            }
+        }
+        deepest[curr]={top.first+1,top.second};
+
+
+
+        int totlen = top.first+sec.first+2;
+        if(totlen>len)
+        {len = totlen,v1=top.second,v2 = sec.second; lca = curr;}
+
+
+}
