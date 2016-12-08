@@ -36,11 +36,14 @@ public:
     vi adj[50];
     int f(int vert , int t , int par = -1){
         int & result = dp[vert][t];
+
         if(result==-1){
             int fromRed = distFromBlue[vert]-t;
-            if(fromRed==0){
+            if(fromRed<=0){
                result= 0;
             }else{
+                result =1;
+                result = max(result,f(vert,t+1,par)+1);
                 for(int nxt:adj[vert]){
                     if(nxt!=par){
                       result = max(f(nxt,t+1,vert)+1,result);
@@ -71,6 +74,7 @@ public:
         for(int i=0;i<B.size();i++){
             distFromBlue[B[i]]=0;
             Q.push(B[i]);
+            done[B[i]]=true;
 
         }
         while(!Q.empty()){
@@ -101,7 +105,10 @@ int main() {
     freopen("cube.txt", "r", stdin);
 #endif
     PROB temp;
-
+    vi a = {0,0,0,3,4,2};
+    vi b ={1};
+    vi c = {6};
+    cout<<temp.roundcnt(a,b,c);
 
     return 0;
 };
