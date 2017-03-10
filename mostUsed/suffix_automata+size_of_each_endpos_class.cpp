@@ -53,4 +53,34 @@ void repstr()
         cnt[ st[ it -> second ].link ] += cnt[ it->second ];
         
 }
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(0);
+#ifdef DEBUG
+    freopen("cube.txt", "r", stdin);
+#endif
+    PROB temp;
+    string big;
+    cin>>big;
+    for(int i=0;i<big.length();i++){
+        sa_extend(big[i]);
+    }
+    int q;
+    cin>>q;
+    for(int i=0;i<q;i++){
+        string small;
+        cin>>small;
+        int ans = 0;
 
+    }
+
+
+
+
+
+
+
+    return 0;
+
+
+};
