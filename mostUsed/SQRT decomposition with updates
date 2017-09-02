@@ -1,0 +1,6 @@
+What I have understood from above comments (I myself have not used it, so correct me if I am wrong somewhere): I think it is a modified form of Sqrt Decomposition:
+Break the array into blocks of size n2 / 3, so you have n1 / 3 blocks.
+Consider a subarray starting at the start of block x and ending at the end of block y. We can precompute such answer for all subarrays such that 0 <= x <= y < n1 / 3. So if we can compute answer for a subarray in linear time, this will take O(n * n2 / 3) -> O(n5 / 3) time.
+For each update occuring at pos, update the precomputed answer for all subarray's in which pos lies. If we can update in O(1) time for a subarray, this will take O(n2 / 3) time per update.
+For query L,R: find the largest precomputed subarray which lies completely inside L,R, and update answer for all remaining elements, which will be O(n2 / 3) in worst case.
+All operations have become similar to Mo's algorithm's "add" and "delete" operations. We have O(n5 / 3) precomputation, and O(n2 / 3) per query and update, provided we can update answer for changing one element in a subarray in O(1) time
