@@ -1,20 +1,17 @@
 int vert[4*MAXN];
-multimap<int , ii > byCost;vii byDays[MAXN];
-int add (int val,int pos,  int vertNum, int l ,int r, bool cleanse = false) {
+int add (int val,int pos,  int node, int l ,int r) {
 
     if (l == r) {
-        vert[vertNum] = val;
-        if (cleanse) vert[vertNum] = INF;
-        return vert[vertNum];
+        vert[node] = val;
+        return vert[node];
     }
     int mid = (l + r)>>1;
     int m = INF;
-    if (pos<= mid) m = add (val, pos, vertNum<<1 , l , mid);
-    else m = add (val, pos, (vertNum<<1) + 1, mid + 1 , r);
+    if (pos<= mid) m = add (val, pos, node<<1 , l , mid);
+    else m = add (val, pos, (node<<1) + 1, mid + 1 , r);
 
-    vert[vertNum] = min (vert[vertNum] , m);
-    if (cleanse) vert[vertNum] = INF;
-    return vert[vertNum];
+    vert[node] = min (vert[node] , m);
+    return vert[node];
 }
 
 int query(int qL,int qR, int num = 1, int l = 0, int r = MAXN -1 ) {
