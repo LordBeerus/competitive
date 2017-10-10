@@ -101,7 +101,7 @@ int ask(int id  ,int L,int R, int l ,int r){// id is the index of the node after
     int sum =0;
     if(L<=mid )// answer is in the left child's interval
         sum += ask(::L[id], L,R, l, mid);
-    else if(R>mid)
+    if(R>mid)
         sum+= ask(::R[id], L,R, mid, r);// there are already s[L[ID]] - s[L[id]] 1s in the left child's interval
 
     return sum;
