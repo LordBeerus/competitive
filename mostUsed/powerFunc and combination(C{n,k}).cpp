@@ -1,12 +1,11 @@
-long mod_pow(long x, int y)
-{
+ll mod_pow(ll x, ll y) {
     // exponentiation by squaring
-    long r = 1;
+    ll r = 1;
     while (y > 0) {
         if (y % 2 == 1) {
-            r = (r*x) % MOD;
+            r = (r * x) % MOD;
         }
-        x = (x*x) % MOD;
+        x = (x * x) % MOD;
         y /= 2;
     }
     return r;
