@@ -9,11 +9,11 @@ int merge(int x,int y) {
     int parx =  find(x);
     int pary = find(y);
     if (rnk[parx]==rnk[pary]) {
-        dsuPar[y] = parx;
+        dsuPar[pary] = parx;
         rnk[parx]++;
     } else if (rnk[parx]<rnk[pary]) {
-        dsuPar[x] = pary;
+        dsuPar[parx] = pary;
     } else {
-        dsuPar[y] = parx;
+        dsuPar[pary] = parx;
     }
 }
