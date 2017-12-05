@@ -16,7 +16,7 @@ void dfs(int curr,int par) {
             low[curr] = min(low[curr],low[child]);
             if (curr==0 && c>1)//not nesscary fof bridge
                 artPoints.insert(curr);
-            else if (curr!=0 && low[child]>= pos[curr]) // remove >=(keep >) for bridge add curr->child as bridge
+            else if (curr!=0 && low[child]>= pos[curr]) // remove >=(keep >) for bridge add (curr to child edge) as bridge and remove curr!=0
                 artPoints.insert(curr);
         } else if (child!=par) {
             low[curr] = min(low[curr],pos[child]);
