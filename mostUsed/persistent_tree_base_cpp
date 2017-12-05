@@ -1,0 +1,48 @@
+int node[20*MAXN],L[20*MAXN],R[20*MAXN];
+int n;
+int NEXT_FREE_INDEX = 0;
+ 
+void build(int id = 1, int l = 1, int r = n){
+
+    if(r == l  ) {
+        node[id] = INF;
+        return;
+    }
+    int mid = (l+r)/2;
+    L[id] = NEXT_FREE_INDEX ++;
+    R[id] = NEXT_FREE_INDEX ++;
+    build(L[id], l, mid);
+    build(R[id], mid+1, r);
+    node[id] = INF;
+
+}
+int upd(int p, int v,int id,int l = 1,int r = n){
+    int ID =  NEXT_FREE_INDEX ++; // index of the node in new version of segment tree
+
+    if(r == l) {
+        node[ID] = v;
+        return ID;
+    }
+    int mid = (l+r)/2;
+    L[ID] = L[id], R[ID] = R[id]; // in case of not updating the interval of left child or right child
+    if(p <= mid)
+        L[ID] = upd(p, v, L[ID], l, mid);
+    else
+        R[ID] = upd(p, v, R[ID], mid+1, r);
+
+    node[ID] = min(node[L[ID]],node[R[ID]]);
+    return ID;
+}
+
+int ask(int Li,int Ri, int id,   int l = 1,int r = n){
+    if(l>=Li && r<=Ri)
+        return node[id];
+    int mid = (l+r)/2;
+    int ans = INF;
+    if(Li<=mid)// answer is in the left child's interval
+        ans = min(ans, ask(Li , Ri, L[id], l, mid));
+    if (Ri>mid)
+        ans =min(ans, ask(Li, Ri,R[id], mid+1, r));// there are already s[L[ID]] - s[L[id]] 1s in the left child's interval
+    return ans;
+
+}
