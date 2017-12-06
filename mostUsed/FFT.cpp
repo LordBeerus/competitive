@@ -1,111 +1,84 @@
-#include <cassert>
+#include <algorithm>
 #include <cstdio>
-#include <cmath>
-
-struct cpx
-{
-  cpx(){}
-  cpx(double aa):a(aa),b(0){}
-  cpx(double aa, double bb):a(aa),b(bb){}
-  double a;
-  double b;
-  double modsq(void) const
-  {
-    return a * a + b * b;
-  }
-  cpx bar(void) const
-  {
-    return cpx(a, -b);
-  }
-};
-
-cpx operator +(cpx a, cpx b)
-{
-  return cpx(a.a + b.a, a.b + b.b);
-}
-
-cpx operator *(cpx a, cpx b)
-{
-  return cpx(a.a * b.a - a.b * b.b, a.a * b.b + a.b * b.a);
-}
-
-cpx operator /(cpx a, cpx b)
-{
-  cpx r = a * b.bar();
-  return cpx(r.a / b.modsq(), r.b / b.modsq());
-}
-
-cpx EXP(double theta)
-{
-  return cpx(cos(theta),sin(theta));
-}
-
-const double two_pi = 4 * acos(0);
-
-// in:     input array
-// out:    output array
-// step:   {SET TO 1} (used internally)
-// size:   length of the input/output {MUST BE A POWER OF 2}
-// dir:    either plus or minus one (direction of the FFT)
-// RESULT: out[k] = \sum_{j=0}^{size - 1} in[j] * exp(dir * 2pi * i * j * k / size)
-void FFT(cpx *in, cpx *out, int step, int size, int dir)
-{
-  if(size < 1) return;
-  if(size == 1)
-  {
-    out[0] = in[0];
-    return;
-  }
-  FFT(in, out, step * 2, size / 2, dir);
-  FFT(in + step, out + size / 2, step * 2, size / 2, dir);
-  for(int i = 0 ; i < size / 2 ; i++)
-  {
-    cpx even = out[i];
-    cpx odd = out[i + size / 2];
-    out[i] = even + EXP(dir * two_pi * i / size) * odd;
-    out[i + size / 2] = even + EXP(dir * two_pi * (i + size / 2) / size) * odd;
-  }
-}
-
-// Usage:
-// f[0...N-1] and g[0..N-1] are numbers
-// Want to compute the convolution h, defined by
-// h[n] = sum of f[k]g[n-k] (k = 0, ..., N-1).
-// Here, the index is cyclic; f[-1] = f[N-1], f[-2] = f[N-2], etc.
-// Let F[0...N-1] be FFT(f), and similarly, define G and H.
-// The convolution theorem says H[n] = F[n]G[n] (element-wise product).
-// To compute h[] in O(N log N) time, do the following:
-//   1. Compute F and G (pass dir = 1 as the argument).
-//   2. Get H by element-wise multiplying F and G.
-//   3. Get h by taking the inverse FFT (use dir = -1 as the argument)
-//      and *dividing by N*. DO NOT FORGET THIS SCALING FACTOR.
-
-int main(void)
-{
-  
-    cpx a[8] = {0, 1, 0, 1, 1, 1, 1,1};
-    cpx b[8] = {1,1, 1,0,  1,  3, 1,  2};
-    cpx A[8];
-    cpx B[8];
-    FFT(a, A, 1, 8, 1);
-    FFT(b, B, 1, 8, 1);
-
-
-
-    cpx AB[8];
-    for(int i = 0 ; i < 8 ; i++)
-        AB[i] = A[i] * B[i];
-    cpx aconvb[8];
-    FFT(AB, aconvb, 1, 8, -1);
-    for(int i = 0 ; i < 8 ; i++)
-        aconvb[i].a = aconvb[i].a / 8;
-    for(int i = 0 ; i < 8 ; i++)
-    {
-        printf("%7.2f", aconvb[i].a );
-    }
-
-
-    return 0;
-  
+#include <ctime>
+#include <vector>
+#include <complex>
  
+using namespace std;
+ 
+typedef complex<double> cd;
+typedef vector<cd> vcd;
+ 
+vcd fft(const vcd &as) {
+  int n = as.size();
+  int k = 0; // Length of n in bits
+  while ((1 << k) < n) k++;
+vector<int> rev(n);
+rev[0] = 0;
+  int high1 = -1;
+  for (int i = 1; i < n; i++) {
+    if ((i & (i - 1)) == 0) // Check for a power of two. I if she is, then i-1 will consist of pile units.
+high1++;
+rev[i] = rev[i ^ (1 << high1)]; // Turn the rest
+rev[i] |= (1 << (k - high1 - 1)); // Add MSB of
+  }
+ 
+vcd roots(n);
+  for (int i = 0; i < n; i++) {
+    double alpha = 2 * M_PI * i / n;
+roots[i] = cd(cos(alpha), sin(alpha));
+  }
+ 
+vcd cur(n);
+  for (int i = 0; i < n; i++)
+cur[i] = as[rev[i]];
+ 
+  for (int len = 1; len < n; len <<= 1) {
+vcd ncur(n);
+    int rstep = roots.size() / (len * 2);
+    for (int pdest = 0; pdest < n;) {
+      int p1 = pdest;
+      for (int i = 0; i < len; i++) {
+cd val = roots[i * rstep] * cur[p1 + len];
+ncur[pdest] = cur[p1] + val;
+ncur[pdest + len] = cur[p1] - val;
+pdest++, p1++;
+      }
+pdest += len;
+    }
+cur.swap(ncur);
+  }
+  return cur;
 }
+ 
+vcd fft_rev(const vcd &as) {
+vcd res = fft(as);
+  for (int i = 0; i < (int)res.size(); i++) res[i] /= as.size();
+reverse(res.begin() + 1, res.end());
+  return res;
+}
+ 
+int main() {
+  int n;
+  //assume n is power of 2 ,if not add some zeros in relavan positions
+  scanf("%d", &n);
+vcd as(n);
+  for (int i = 0; i < n; i++) {
+    int x;
+    scanf("%d", &x);
+as[i] = x;
+  }
+ 
+  clock_t stime = clock();
+vcd res = fft(as);
+  fprintf(stderr, "%d\n", (int)(clock() - stime));
+  for (int i = 0; i < n; i++)
+    printf("%.4lf %.4lf\n", res[i].real(), res[i].imag());
+ 
+stime = clock();
+vcd as2 = fft_rev(res);
+  fprintf(stderr, "%d\n", (int)(clock() - stime));
+  for (int i = 0; i < n; i++)
+    printf("%.4lf %.4lf\n", as2[i].real(), as2[i].imag());
+  return 0;
+} 
