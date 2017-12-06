@@ -1,84 +1,58 @@
-#include <algorithm>
-#include <cstdio>
-#include <ctime>
-#include <vector>
-#include <complex>
- 
-using namespace std;
- 
 typedef complex<double> cd;
+typedef complex<double>  base;
+
 typedef vector<cd> vcd;
- 
-vcd fft(const vcd &as) {
-  int n = as.size();
-  int k = 0; // Length of n in bits
-  while ((1 << k) < n) k++;
-vector<int> rev(n);
-rev[0] = 0;
-  int high1 = -1;
-  for (int i = 1; i < n; i++) {
-    if ((i & (i - 1)) == 0) // Check for a power of two. I if she is, then i-1 will consist of pile units.
-high1++;
-rev[i] = rev[i ^ (1 << high1)]; // Turn the rest
-rev[i] |= (1 << (k - high1 - 1)); // Add MSB of
-  }
- 
-vcd roots(n);
-  for (int i = 0; i < n; i++) {
-    double alpha = 2 * M_PI * i / n;
-roots[i] = cd(cos(alpha), sin(alpha));
-  }
- 
-vcd cur(n);
-  for (int i = 0; i < n; i++)
-cur[i] = as[rev[i]];
- 
-  for (int len = 1; len < n; len <<= 1) {
-vcd ncur(n);
-    int rstep = roots.size() / (len * 2);
-    for (int pdest = 0; pdest < n;) {
-      int p1 = pdest;
-      for (int i = 0; i < len; i++) {
-cd val = roots[i * rstep] * cur[p1 + len];
-ncur[pdest] = cur[p1] + val;
-ncur[pdest + len] = cur[p1] - val;
-pdest++, p1++;
-      }
-pdest += len;
+
+
+void fft2(vector<base> & a, bool invert) {
+    int n = (int)a.size();
+
+    for (int i = 1, j = 0; i<n; ++i) {
+        int bit = n >> 1;
+        for (; j >= bit; bit >>= 1)
+            j -= bit;
+        j += bit;
+        if (i < j)
+            swap(a[i], a[j]);
     }
-cur.swap(ncur);
-  }
-  return cur;
+    long double PI = acos(-1);
+    for (int len = 2; len <= n; len <<= 1) {
+        double ang = 2 * pi / len * (invert ? -1 : 1);
+        base wlen(cos(ang), sin(ang));
+        for (int i = 0; i<n; i += len) {
+            base w(1.0);
+            for (int j = 0; j<len / 2; ++j) {
+                base u = a[i + j], v = a[i + j + len / 2] * w;
+                a[i + j] = u + v;
+                a[i + j + len / 2] = u - v;
+                w *= wlen;
+            }
+        }
+    }
+    if (invert)
+        for (int i = 0; i<n; ++i)
+            a[i] /= n;
+
 }
- 
-vcd fft_rev(const vcd &as) {
-vcd res = fft(as);
-  for (int i = 0; i < (int)res.size(); i++) res[i] /= as.size();
-reverse(res.begin() + 1, res.end());
-  return res;
+
+vector < int > multiply2(vector < int > a, vector < int > b)
+{
+    vector < int > res;
+    vector < complex < double > > fa(a.begin(), a.end()),  fb(b.begin(), b.end());
+    int n = 1;
+    while (n < max(a.size(), b.size())){
+        n *= 2;
+    }
+    n *= 2;
+    fa.resize(n), fb.resize(n);
+    fft2(fa, false), fft2(fb, false);
+    for(int i = 0; i < n; i++){
+        fa[i] *= fb[i];
+    }
+    fft2(fa, true);
+    res.resize(n);
+    for(int i = 0; i < n; i++){
+        res[i] = int(fa[i].real() + 0.5);
+    }
+    return res;
 }
- 
-int main() {
-  int n;
-  //assume n is power of 2 ,if not add some zeros in relavan positions
-  scanf("%d", &n);
-vcd as(n);
-  for (int i = 0; i < n; i++) {
-    int x;
-    scanf("%d", &x);
-as[i] = x;
-  }
- 
-  clock_t stime = clock();
-vcd res = fft(as);
-  fprintf(stderr, "%d\n", (int)(clock() - stime));
-  for (int i = 0; i < n; i++)
-    printf("%.4lf %.4lf\n", res[i].real(), res[i].imag());
- 
-stime = clock();
-vcd as2 = fft_rev(res);
-  fprintf(stderr, "%d\n", (int)(clock() - stime));
-  for (int i = 0; i < n; i++)
-    printf("%.4lf %.4lf\n", as2[i].real(), as2[i].imag());
-  return 0;
-} 
