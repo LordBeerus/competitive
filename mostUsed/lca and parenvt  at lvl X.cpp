@@ -51,7 +51,7 @@ int main() {
     dfs();
   
     for (int j = 1; j <= ceil(log2(n)); j++)
-        for (int i = 0; i < n; i++)
+        for (int i = 0; i < n; i++)//0 indexed...replace by i=1 till n for 1 indexed
             if (A[i][j - 1] != -1)
                 A[i][j] = A[A[i][j - 1]][j - 1];
             else
