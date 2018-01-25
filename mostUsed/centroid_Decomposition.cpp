@@ -47,3 +47,9 @@ void findCentroid(int curr, int par, int cntParent) {
     }
 
 }
+
+
+/* USAGE
+    findSize(0,-1);
+    findCentroid(0,-1,0);
+*/
