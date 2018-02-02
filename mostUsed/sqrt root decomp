@@ -1,0 +1,23 @@
+ ans(int l,int r,int x) {
+    int start = l/sqr;
+    int end = r/sqr;
+    int gcd = x;
+    int probs = 0;
+    rep (i,l,min( (start+1)*sqr,r+1)) {
+        
+    }
+ 
+
+    rep (i,start+1,end) {
+        
+
+    }
+
+    if (start!=end) {
+        rep (i,end*sqr,r+1) {
+
+            
+        }
+    }
+     
+}
