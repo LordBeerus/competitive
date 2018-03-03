@@ -1,11 +1,12 @@
+//sample finds sum as elements are added
 int node[20*MAXN],L[20*MAXN],R[20*MAXN];
 int n;
 int NEXT_FREE_INDEX = 0;
- 
+
 void build(int id = 1, int l = 1, int r = n){
 
     if(r == l  ) {
-        node[id] = INF;
+        node[id] = 0;
         return;
     }
     int mid = (l+r)/2;
@@ -13,14 +14,14 @@ void build(int id = 1, int l = 1, int r = n){
     R[id] = NEXT_FREE_INDEX ++;
     build(L[id], l, mid);
     build(R[id], mid+1, r);
-    node[id] = INF;
+    node[id] = 0;
 
 }
 int upd(int p, int v,int id,int l = 1,int r = n){
     int ID =  NEXT_FREE_INDEX ++; // index of the node in new version of segment tree
 
     if(r == l) {
-        node[ID] = v;
+        node[ID] += v;
         return ID;
     }
     int mid = (l+r)/2;
@@ -30,7 +31,7 @@ int upd(int p, int v,int id,int l = 1,int r = n){
     else
         R[ID] = upd(p, v, R[ID], mid+1, r);
 
-    node[ID] = min(node[L[ID]],node[R[ID]]);
+    node[ID] = node[L[ID]]+node[R[ID]];
     return ID;
 }
 
@@ -38,11 +39,11 @@ int ask(int Li,int Ri, int id,   int l = 1,int r = n){
     if(l>=Li && r<=Ri)
         return node[id];
     int mid = (l+r)/2;
-    int ans = INF;
+    int ans = 0;
     if(Li<=mid)// answer is in the left child's interval
-        ans = min(ans, ask(Li , Ri, L[id], l, mid));
+        ans = ans+ ask(Li , Ri, L[id], l, mid);
     if (Ri>mid)
-        ans =min(ans, ask(Li, Ri,R[id], mid+1, r));// there are already s[L[ID]] - s[L[id]] 1s in the left child's interval
+        ans =ans+ask(Li, Ri,R[id], mid+1, r);// there are already s[L[ID]] - s[L[id]] 1s in the left child's interval
     return ans;
 
 }
