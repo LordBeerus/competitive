@@ -1,5 +1,5 @@
 //sample finds sum as elements are added
-int node[20*MAXN],L[20*MAXN],R[20*MAXN];
+int node[20*maxn],L[20*maxn],R[20*maxn];
 int n;
 int NEXT_FREE_INDEX = 0;
 
