@@ -8,7 +8,7 @@
      for(int i=2;i<=limit;i++){
          if(in[i]){
              primes.push_back(i);
-             for(int j=i;j<=limit;j+=i)
+             for(int j=i*2;j<=limit;j+=i)
                  in[j]=false;
          }
      }
