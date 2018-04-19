@@ -1,7 +1,7 @@
-vi adj[MAXN];
+vi adj[maxn];
 int INDEX = 0;
-bool onStack[MAXN];
-int index_[MAXN], lowLink[MAXN];
+bool onStack[maxn];
+int index_[maxn], lowLink[maxn];
 stack<int> stk;
 vvi components;//0 -> lowest in topological order
 void getConnectedComponent(int i);
