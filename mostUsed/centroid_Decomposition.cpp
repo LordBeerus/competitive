@@ -1,8 +1,8 @@
 
-vi graph[MAXN];
+vi graph[maxn];
 vii centerAndParentNode;
-int szTree[MAXN];
-bool centroid[MAXN];
+int szTree[maxn];
+bool centroid[maxn];
 
 
 bool findSize(int curr, int par) {
