@@ -1,6 +1,6 @@
-int vert[4*MAXN];
+int vert[4*maxn],n;
 //point update
-void add (int val,int pos,  int node, int l ,int r) {
+void add (int val,int pos,  int node=1, int l=1 ,int r=n) {
 
     if (l == r) {
         vert[node] = val;
@@ -8,14 +8,13 @@ void add (int val,int pos,  int node, int l ,int r) {
     }
     int mid = (l + r)>>1;
     
-    if (pos<= mid) m = add (val, pos, node<<1 , l , mid);
-    else m = add (val, pos, (node<<1) + 1, mid + 1 , r);
+    if (pos<= mid)  add (val, pos, node<<1 , l , mid);
+    else  add (val, pos, (node<<1) + 1, mid + 1 , r);
 
     vert[node] =  // ;
-    return vert[node];
-}
+ }
 //range query
-int query(int qL,int qR, int num = 1, int l = 0, int r = MAXN -1 ) {
+int query(int qL,int qR, int num = 1, int l = 1, int r = n ) {
     if (qL <=l && qR>= r ) return vert[num];
     int mid = (l + r)>>1;
     int ans = INF;
@@ -26,7 +25,7 @@ int query(int qL,int qR, int num = 1, int l = 0, int r = MAXN -1 ) {
 
 }
 //range update 
-void add (int val,int L,int R,  int node, int l ,int r) {
+void add (int val,int L,int R,  int node=1, int l=1 ,int r=n) {
     if (l>=L && r<=R) {
         lazy[node] += val;
         vert[node] += val;
